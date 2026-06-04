@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    /* 🔧 Basic Setup */
+    "target": "ES6",
+    "module": "CommonJS",
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    /* ⚡ Node Compatibility */
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
+    "types": ["node"],
+
+    /* 🛡️ Type Safety */
+    "strict": true,
+    "skipLibCheck": true,
+
+    /* 📦 Optional (clean build) */
+    "forceConsistentCasingInFileNames": true
+  }
+}
