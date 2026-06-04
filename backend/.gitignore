@@ -7,11 +7,11 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Keep node_modules in Git
+node_modules/
+
 *.local
-.env
+# .env
 
 # Editor directories and files
 .vscode/*
@@ -23,3 +23,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.vercel
