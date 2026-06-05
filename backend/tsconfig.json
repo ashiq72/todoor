@@ -3,7 +3,7 @@
     /* 🔧 Basic Setup */
     "target": "ES6",
     "module": "CommonJS",
-    "rootDir": "./src",
+    "rootDir": ".",
     "outDir": "./dist",
 
     /* ⚡ Node Compatibility */
@@ -18,5 +18,7 @@
 
     /* 📦 Optional (clean build) */
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "include": ["src/**/*", "test-db.ts"],
+  "exclude": ["node_modules", "dist"]
 }
