@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
+import router from "./app/modules/core.route"
 
 const app = express();
 
@@ -17,6 +18,6 @@ app.get("/", (req, res) => {
 });
 
 // routes (future)
-// app.use("/api/v1", routes);
+app.use("/api/v1", router);
 
 export default app;
