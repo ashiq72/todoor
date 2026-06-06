@@ -1,40 +1,54 @@
 // src/app/middlewares/auth.middleware.ts
 
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
-export const verifyToken = (roles?: string[]) => {
+// 🔐 custom type (optional but better)
+interface DecodedUser extends JwtPayload {
+  email: string;
+  role: string;
+  userId: string;
+}
+
+// 🎯 middleware factory (with roles)
+export const verifyToken = (...roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      // 🔐 1. Get token from header
-   const token = req.headers.authorization?.split(" ")[1];
-      console.log("Token from header:", token);
-      if (!token) {
+      // 1️⃣ Get Authorization header
+      const authHeader = req.headers.authorization;
+
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({
-          message: "No token provided",
+          success: false,
+          message: "Unauthorized: No token provided",
         });
       }
 
-      // 🔐 2. Verify token
+      // 2️⃣ Extract token
+      const token = authHeader.split(" ")[1];
+
+      // 3️⃣ Verify token
       const decoded = jwt.verify(
         token,
         process.env.JWT_SECRET as string
-      ) as any;
+      ) as DecodedUser;
 
-      // 🧠 3. Role check (if roles passed)
-      if (roles && !roles.includes(decoded.role)) {
+      // 4️⃣ Role check (if roles provided)
+      if (roles.length && !roles.includes(decoded.role)) {
         return res.status(403).json({
-          message: "Forbidden: You don't have access",
+          success: false,
+          message: "Forbidden: Access denied",
         });
       }
 
-      // 📦 4. Attach user to request
+      // 5️⃣ Attach user to request
       (req as any).user = decoded;
 
       next();
-    } catch (err) {
+    } catch (error) {
       return res.status(401).json({
-        message: "Unauthorized",
+        success: false,
+        message: "Unauthorized: Invalid or expired token",
       });
     }
   };
