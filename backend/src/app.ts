@@ -6,12 +6,6 @@ import router from "./app/modules/core.route";
 import config from "./config";
 
 const app = express();
-const allowedOrigins = [
-  "http://localhost:3000",
-  config.client_url,
-  ...(process.env.CORS_ORIGINS?.split(",") || []),
-].filter(Boolean) as string[];
-
 // middlewares
 app.use(
   cors({
