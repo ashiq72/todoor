@@ -12,24 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
-const _1 = __importDefault(require("."));
-let isConnected = false;
-const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    if (isConnected || mongoose_1.default.connection.readyState === 1) {
-        return;
-    }
-    if (!_1.default.database_url) {
-        throw new Error("DATABASE_URL is not defined");
-    }
-    try {
-        yield mongoose_1.default.connect(_1.default.database_url);
-        isConnected = true;
-        console.log("Database connected successfully");
-    }
-    catch (error) {
-        console.error("Database connection failed", error);
-        throw error;
-    }
-});
-exports.default = connectDB;
+exports.default = handler;
+const app_1 = __importDefault(require("../src/app"));
+const db_1 = __importDefault(require("../src/config/db"));
+function handler(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield (0, db_1.default)();
+        return (0, app_1.default)(req, res);
+    });
+}

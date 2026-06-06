@@ -1,30 +1,21 @@
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import app from "./app";
 import config from "./config";
+import connectDB from "./config/db";
 
 dotenv.config();
 
-const DATABASE_URL = config.database_url as string;
+const port = config.port || 5000;
 
-let isConnected = false;
+const bootstrap = async () => {
+  await connectDB();
 
-// ✅ Connect DB (serverless safe)
-const connectDB = async () => {
-  if (isConnected) return;
-
-  try {
-    await mongoose.connect(DATABASE_URL);
-    isConnected = true;
-    console.log("✅ Database connected");
-  } catch (error) {
-    console.error("❌ DB connection error:", error);
-    throw error;
-  }
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
 };
 
-// ✅ Vercel handler
-export default async function handler(req: any, res: any) {
-  await connectDB();
-  return app(req, res);
-}
+bootstrap().catch((error) => {
+  console.error("Failed to start server", error);
+  process.exit(1);
+});

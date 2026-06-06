@@ -12,32 +12,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = handler;
-const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const app_1 = __importDefault(require("./app"));
 const config_1 = __importDefault(require("./config"));
+const db_1 = __importDefault(require("./config/db"));
 dotenv_1.default.config();
-const DATABASE_URL = config_1.default.database_url;
-let isConnected = false;
-// ✅ Connect DB (serverless safe)
-const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    if (isConnected)
-        return;
-    try {
-        yield mongoose_1.default.connect(DATABASE_URL);
-        isConnected = true;
-        console.log("✅ Database connected");
-    }
-    catch (error) {
-        console.error("❌ DB connection error:", error);
-        throw error;
-    }
-});
-// ✅ Vercel handler
-function handler(req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield connectDB();
-        return (0, app_1.default)(req, res);
+const port = config_1.default.port || 5000;
+const bootstrap = () => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, db_1.default)();
+    app_1.default.listen(port, () => {
+        console.log(`Server is running on port ${port}`);
     });
-}
+});
+bootstrap().catch((error) => {
+    console.error("Failed to start server", error);
+    process.exit(1);
+});
