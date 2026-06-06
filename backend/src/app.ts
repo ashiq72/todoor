@@ -2,15 +2,27 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
-import router from "./app/modules/core.route"
+import router from "./app/modules/core.route";
+import config from "./config";
 
 const app = express();
+const allowedOrigins = [
+  "http://localhost:3000",
+  config.client_url,
+  ...(process.env.CORS_ORIGINS?.split(",") || []),
+].filter(Boolean) as string[];
 
 // middlewares
 app.use(
   cors({
-    origin: "http://localhost:3000", // your frontend
-    credentials: true, // IMPORTANT if using cookies/auth
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
   })
 );
 app.use(express.json());

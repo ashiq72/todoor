@@ -7,6 +7,8 @@ dotenv.config({
 
 export default {
   port: process.env.PORT,
+  node_env: process.env.NODE_ENV || "development",
+  client_url: process.env.CLIENT_URL || process.env.FRONTEND_URL,
 //   NODE_ENV: process.env.NODE_ENV,
   database_url: process.env.DATABASE_URL,
 //   default_password: process.env.DEFAULT_PASS,

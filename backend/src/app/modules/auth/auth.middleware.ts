@@ -1,32 +1,62 @@
 // src/app/middlewares/auth.middleware.ts
 
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import config from "../../../config";
+
+const getCookieValue = (cookieHeader: string | undefined, name: string) => {
+  if (!cookieHeader) return undefined;
+
+  return cookieHeader
+    .split(";")
+    .map((cookie) => cookie.trim())
+    .find((cookie) => cookie.startsWith(`${name}=`))
+    ?.split("=")
+    .slice(1)
+    .join("=");
+};
+
+const getTokenFromRequest = (req: Request) => {
+  const authHeader = req.headers.authorization;
+
+  if (authHeader?.startsWith("Bearer ")) {
+    return authHeader.split(" ")[1];
+  }
+
+  return authHeader || getCookieValue(req.headers.cookie, "accessToken");
+};
 
 export const verifyToken = (roles?: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      const token = req.headers.authorization;
+      const token = getTokenFromRequest(req);
 
-      if (!token) throw new Error("No token provided");
+      if (!token) {
+        return res.status(401).json({
+          success: false,
+          message: "Unauthorized",
+        });
+      }
 
-      const decoded = jwt.verify(
-        token,
-        process.env.JWT_SECRET as string
-      ) as any;
+      if (!config.jwt_secret) {
+        throw new Error("JWT_SECRET is not defined");
+      }
 
-      if (roles && !roles.includes(decoded.role)) {
+      const decoded = jwt.verify(token, config.jwt_secret) as any;
+
+      if (roles && roles.length > 0 && !roles.includes(decoded.role)) {
         return res.status(403).json({
+          success: false,
           message: "Forbidden",
         });
       }
 
-      (req as any).user = decoded;
-
+      req.user = decoded;
       next();
     } catch (err) {
-      res.status(401).json({
-        message: "Unauthorized",
+      return res.status(401).json({
+        success: false,
+        message: "Invalid Token",
       });
     }
   };

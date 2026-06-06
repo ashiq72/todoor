@@ -9,10 +9,8 @@ export const loginUser = async (data: {
     body: JSON.stringify(data),
   });
 
-  // 🔥 important fix
   return {
     success: res.success,
-    token: res.data?.accessToken, // 👈 match your backend
     user: res.data?.user,
     message: res.message,
   };
@@ -27,8 +25,20 @@ export const registerUser = async (data: any) => {
   return res;
 };
 
+export const getCurrentUser = async () => {
+  return await fetcher("/auth/me", {
+    method: "GET",
+  });
+};
+
 export const getDashboard = async () => {
   return await fetcher("/dashboard", {
     method: "GET",
+  });
+};
+
+export const logoutUser = async () => {
+  return await fetcher("/auth/logout", {
+    method: "POST",
   });
 };

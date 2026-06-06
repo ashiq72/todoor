@@ -3,6 +3,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from "./auth.model";
+import config from "../../../config";
 
 
 const registerUser = async (payload: any) => {
@@ -25,13 +26,25 @@ const loginUser = async (email: string, password: string) => {
 
   if (!isMatch) throw new Error("Invalid credentials");
 
+  if (!config.jwt_secret) {
+    throw new Error("JWT_SECRET is not defined");
+  }
+
   const token = jwt.sign(
     { userId: user._id, role: user.role },
-    process.env.JWT_SECRET as string,
+    config.jwt_secret,
     { expiresIn: "7d" }
   );
 
-  return { token };
+  return {
+    token,
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+  };
 };
 
 export const AuthService = {
