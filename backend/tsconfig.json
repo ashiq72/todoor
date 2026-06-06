@@ -19,6 +19,6 @@
     /* 📦 Optional (clean build) */
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*", "test-db.ts"],
+  "include": ["src/**/*", "test-db.ts", "dist/api"],
   "exclude": ["node_modules", "dist"]
 }

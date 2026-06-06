@@ -6,11 +6,12 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
+   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "dist/server.js"
+      "src": "/api/(.*)",
+      "dest": "/api"
     }
-  ],
+  ]
+,
   "buildCommand": "npm run build"
 }
