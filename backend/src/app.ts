@@ -7,7 +7,12 @@ import router from "./app/modules/core.route"
 const app = express();
 
 // middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // your frontend
+    credentials: true, // IMPORTANT if using cookies/auth
+  })
+);
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet());

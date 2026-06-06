@@ -46,14 +46,14 @@ export default function DashboardPage() {
         {/* Total */}
         <div className="bg-white p-6 rounded-xl shadow">
           <h2 className="text-gray-500">Total Tasks</h2>
-          <p className="text-2xl font-bold">{data.total}</p>
+         <p className="text-2xl font-bold">{data?.total || 0}</p>
         </div>
 
         {/* Completed */}
         <div className="bg-green-100 p-6 rounded-xl shadow">
           <h2 className="text-gray-600">Completed</h2>
           <p className="text-2xl font-bold text-green-700">
-            {data.completed}
+            {data?.completed || 0}
           </p>
         </div>
 
@@ -61,7 +61,7 @@ export default function DashboardPage() {
         <div className="bg-yellow-100 p-6 rounded-xl shadow">
           <h2 className="text-gray-600">Pending</h2>
           <p className="text-2xl font-bold text-yellow-700">
-            {data.pending}
+            {data?.pending || 0}
           </p>
         </div>
 
@@ -69,7 +69,7 @@ export default function DashboardPage() {
         <div className="bg-blue-100 p-6 rounded-xl shadow">
           <h2 className="text-gray-600">In Progress</h2>
           <p className="text-2xl font-bold text-blue-700">
-            {data.inProgress}
+            {data?.inProgress || 0}
           </p>
         </div>
 

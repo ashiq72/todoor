@@ -1,6 +1,6 @@
 // src/services/api.ts
 
-const BASE_URL = "http://localhost:5000/api/v1";
+const BASE_URL = "https://todoor-x.vercel.app/api/v1";
 
 export const fetcher = async (url: string, options: any = {}) => {
   const token =
