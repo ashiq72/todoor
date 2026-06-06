@@ -1,23 +1,36 @@
 // src/app/modules/dashboard/dashboard.service.ts
 
+import mongoose from "mongoose";
 import { Task } from "../task/task.model";
 
 const getDashboardData = async (userId: string) => {
-  const total = await Task.countDocuments({ user: userId });
+  const objectUserId = new mongoose.Types.ObjectId(userId);
 
-  const completed = await Task.countDocuments({
-    user: userId,
-    status: "completed",
-  });
+  const stats = await Task.aggregate([
+    {
+      $match: { user: objectUserId },
+    },
+    {
+      $group: {
+        _id: "$status",
+        count: { $sum: 1 },
+      },
+    },
+  ]);
 
-  const pending = await Task.countDocuments({
-    user: userId,
-    status: "pending",
-  });
+  // default values
+  let total = 0;
+  let completed = 0;
+  let pending = 0;
+  let inProgress = 0;
 
-  const inProgress = await Task.countDocuments({
-    user: userId,
-    status: "in-progress",
+  // map aggregation result
+  stats.forEach((item) => {
+    total += item.count;
+
+    if (item._id === "completed") completed = item.count;
+    if (item._id === "pending") pending = item.count;
+    if (item._id === "in-progress") inProgress = item.count;
   });
 
   return {
