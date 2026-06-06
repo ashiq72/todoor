@@ -16,6 +16,7 @@ exports.AuthService = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const auth_model_1 = require("./auth.model");
+const config_1 = __importDefault(require("../../../config"));
 const registerUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const hashedPassword = yield bcrypt_1.default.hash(payload.password, 10);
     const user = yield auth_model_1.User.create(Object.assign(Object.assign({}, payload), { password: hashedPassword }));
@@ -29,8 +30,19 @@ const loginUser = (email, password) => __awaiter(void 0, void 0, void 0, functio
     const isMatch = yield bcrypt_1.default.compare(password, user.password);
     if (!isMatch)
         throw new Error("Invalid credentials");
-    const token = jsonwebtoken_1.default.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
-    return { token };
+    if (!config_1.default.jwt_secret) {
+        throw new Error("JWT_SECRET is not defined");
+    }
+    const token = jsonwebtoken_1.default.sign({ userId: user._id, role: user.role }, config_1.default.jwt_secret, { expiresIn: "7d" });
+    return {
+        token,
+        user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        },
+    };
 });
 exports.AuthService = {
     registerUser,
