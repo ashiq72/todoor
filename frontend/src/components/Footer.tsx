@@ -9,7 +9,7 @@ export default function Sidebar() {
   const menu = [
     { name: "Dashboard", path: "/dashboard" },
     { name: "Tasks", path: "/dashboard/tasks" },
-    { name: "Create Task", path: "/dashboard/create" },
+    { name: "Create Task", path: "/dashboard/task/create" },
   ];
 
   return (
